@@ -1,19 +1,16 @@
-import { ApolloServer, gql } from 'apollo-server'
+import 'reflect-metadata'
+import { ApolloServer } from 'apollo-server'
+import { buildSchema } from 'type-graphql'
+import { MessageResolver } from './resolvers/MessageResolver'
 
-const typeDefs = gql`
-  type Query {
-    initialQuery: String
-  }
-`
+const main = async () => {
+  const schema = await buildSchema({ resolvers: [MessageResolver] })
 
-const resolvers = {
-  Query: {
-    initialQuery: () => 'Initial Query',
-  },
+  const server = new ApolloServer({ schema })
+
+  server.listen().then(({ url }) => {
+    console.log(`🚀  Server ready at ${url}`)
+  })
 }
 
-const server = new ApolloServer({ typeDefs, resolvers })
-
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`)
-})
+main()
