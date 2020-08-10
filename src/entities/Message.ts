@@ -3,7 +3,7 @@ import { ObjectType, Field, ID } from 'type-graphql'
 @ObjectType()
 export class Message {
   @Field(() => ID)
-  id!: string
+  id!: number
 
   @Field()
   sender!: string
