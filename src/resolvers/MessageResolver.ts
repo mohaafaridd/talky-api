@@ -1,4 +1,13 @@
-import { Resolver, Query, Mutation, Arg } from 'type-graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  PubSub,
+  Subscription,
+  Root,
+  Publisher,
+} from 'type-graphql'
 import { Message } from '../entities/Message'
 
 @Resolver()
@@ -13,7 +22,8 @@ export class MessageResolver {
   @Mutation(() => Message)
   async sendMessage(
     @Arg('sender') sender: string,
-    @Arg('message') message: string
+    @Arg('message') message: string,
+    @PubSub('chat') pubSub: Publisher<Message>
   ): Promise<Message> {
     const createdMessage: Message = {
       id: this.messagesCollection.length + 1,
@@ -23,7 +33,15 @@ export class MessageResolver {
     }
 
     this.messagesCollection.push(createdMessage)
+    await pubSub(createdMessage)
 
     return createdMessage
+  }
+
+  @Subscription({
+    topics: 'chat',
+  })
+  messageSent(@Root() chat: Message): Message {
+    return chat
   }
 }
