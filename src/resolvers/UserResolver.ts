@@ -1,4 +1,13 @@
-import { Resolver, Query, Arg, Mutation } from 'type-graphql'
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  Subscription,
+  Root,
+  PubSub,
+  PubSubEngine,
+} from 'type-graphql'
 import { BinarySearchTree } from '../datastructure/BinarySearchTree'
 import { User } from '../entities/User'
 
@@ -24,7 +33,8 @@ export class UserResolver {
   @Mutation(() => User, { nullable: true })
   async createUser(
     @Arg('name') name: string,
-    @Arg('room') room: string
+    @Arg('room') room: string,
+    @PubSub() pubSub: PubSubEngine
   ): Promise<User | null> {
     const userExists = this.usersCollection.find(name)
 
@@ -38,7 +48,17 @@ export class UserResolver {
     }
 
     this.usersCollection.insert(user)
+    await pubSub.publish(room, user)
 
+    return user
+  }
+
+  @Subscription({
+    topics: ({ args }) => args.room,
+  })
+  userJoined(@Root() user: User, @Arg('room') topic: string): User {
+    // Just to shut up typescript compiler
+    topic.length
     return user
   }
 }
