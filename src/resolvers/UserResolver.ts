@@ -56,9 +56,9 @@ export class UserResolver {
   @Subscription({
     topics: ({ args }) => args.room,
   })
-  userJoined(@Root() user: User, @Arg('room') topic: string): User {
+  userJoined(@Root() user: User, @Arg('room') room: string): User {
     // Just to shut up typescript compiler
-    topic.length
+    room.length
     return user
   }
 }
