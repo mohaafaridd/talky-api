@@ -8,8 +8,8 @@ export class UserService {
   private readonly usersCollection = new BinarySearchTree<User>()
   private count = 0
 
-  async getAll(): Promise<User[] | null> {
-    return this.usersCollection.dfsInOrder()
+  async getAll(room?: string): Promise<User[] | null> {
+    return this.usersCollection.dfsInOrder(room)
   }
 
   async getOne(name: string): Promise<User | null> {
