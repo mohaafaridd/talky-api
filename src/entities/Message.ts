@@ -12,7 +12,7 @@ export class Message {
   channel!: string
 
   @Field()
-  message!: string
+  content!: string
 
   @Field()
   createDate!: Date
