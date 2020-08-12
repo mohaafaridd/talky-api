@@ -29,6 +29,7 @@ export class MessageResolver {
     const createdMessage: Message = {
       id: this.messagesCollection.length + 1,
       sender,
+      channel,
       message,
       createDate: new Date(),
     }

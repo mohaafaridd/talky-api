@@ -9,6 +9,9 @@ export class Message {
   sender!: string
 
   @Field()
+  channel!: string
+
+  @Field()
   message!: string
 
   @Field()
