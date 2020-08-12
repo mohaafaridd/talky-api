@@ -6,7 +6,7 @@ import {
   PubSub,
   Subscription,
   Root,
-  Publisher,
+  PubSubEngine,
 } from 'type-graphql'
 import { Message } from '../entities/Message'
 
@@ -23,7 +23,8 @@ export class MessageResolver {
   async sendMessage(
     @Arg('sender') sender: string,
     @Arg('message') message: string,
-    @PubSub('chat') pubSub: Publisher<Message>
+    @Arg('channel') channel: string,
+    @PubSub() pubSub: PubSubEngine
   ): Promise<Message> {
     const createdMessage: Message = {
       id: this.messagesCollection.length + 1,
@@ -33,15 +34,18 @@ export class MessageResolver {
     }
 
     this.messagesCollection.push(createdMessage)
-    await pubSub(createdMessage)
+    await pubSub.publish(channel, createdMessage)
 
     return createdMessage
   }
 
+  // TODO | Args interface
   @Subscription({
-    topics: 'chat',
+    topics: ({ args }) => args.topic,
   })
-  messageSent(@Root() chat: Message): Message {
+  messageSent(@Root() chat: Message, @Arg('topic') topic: string): Message {
+    // Just to shut up typescript compiler
+    topic.length
     return chat
   }
 }
