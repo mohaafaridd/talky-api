@@ -14,6 +14,13 @@ export class UserResolver {
     return user
   }
 
+  @Query(() => [User])
+  async users(): Promise<User[]> {
+    const users = this.usersCollection.dfsInOrder()
+    if (!users) return []
+    return users
+  }
+
   @Mutation(() => User, { nullable: true })
   async createUser(
     @Arg('name') name: string,

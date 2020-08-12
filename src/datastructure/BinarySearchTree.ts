@@ -58,6 +58,8 @@ export class BinarySearchTree<T extends HasName> {
   }
 
   public dfsInOrder() {
+    if (!this._root) return []
+
     const result: T[] = []
 
     const traverse = (node: Node<T>) => {
