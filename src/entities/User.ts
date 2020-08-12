@@ -9,7 +9,7 @@ export class User {
   name!: string
 
   @Field()
-  room!: string
+  channel!: string
 
   @Field()
   joinDate!: Date

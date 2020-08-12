@@ -8,15 +8,15 @@ export class UserService {
   private readonly usersCollection = new BinarySearchTree<User>()
   private count = 0
 
-  async getAll(room?: string): Promise<User[] | null> {
-    return this.usersCollection.dfsInOrder(room)
+  async getAll(channel?: string): Promise<User[] | null> {
+    return this.usersCollection.dfsInOrder(channel)
   }
 
   async getOne(name: string): Promise<User | null> {
     return this.usersCollection.find(name)
   }
 
-  async createOne(name: string, room: string): Promise<User | null> {
+  async createOne(name: string, channel: string): Promise<User | null> {
     const userExists = this.usersCollection.find(name)
 
     if (userExists) throw new Error('Username already exist')
@@ -24,7 +24,7 @@ export class UserService {
     const user: User = {
       id: this.count++,
       name,
-      room,
+      channel,
       joinDate: new Date(),
     }
 

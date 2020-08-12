@@ -26,8 +26,10 @@ export class UserResolver {
   }
 
   @Query(() => [User])
-  async users(@Arg('room', { nullable: true }) room: string): Promise<User[]> {
-    const users = await this.userService.getAll(room)
+  async users(
+    @Arg('channel', { nullable: true }) channel: string
+  ): Promise<User[]> {
+    const users = await this.userService.getAll(channel)
     if (!users) return []
     return users
   }
@@ -35,22 +37,22 @@ export class UserResolver {
   @Mutation(() => User, { nullable: true })
   async createUser(
     @Arg('name') name: string,
-    @Arg('room') room: string,
+    @Arg('channel') channel: string,
     @PubSub() pubSub: PubSubEngine
   ): Promise<User | null> {
-    const user = await this.userService.createOne(name, room)
+    const user = await this.userService.createOne(name, channel)
 
-    await pubSub.publish(room, user)
+    await pubSub.publish(channel, user)
 
     return user
   }
 
   @Subscription({
-    topics: ({ args }) => args.room,
+    topics: ({ args }) => args.channel,
   })
-  userJoined(@Root() user: User, @Arg('room') room: string): User {
+  userJoined(@Root() user: User, @Arg('channel') channel: string): User {
     // Just to shut up typescript compiler
-    room.length
+    channel.length
     return user
   }
 }
