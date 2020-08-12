@@ -1,5 +1,6 @@
-interface HasName {
+interface HasProps {
   name: string
+  room?: string
 }
 
 class Node<T> {
@@ -8,7 +9,7 @@ class Node<T> {
   constructor(public value: T) {}
 }
 
-export class BinarySearchTree<T extends HasName> {
+export class BinarySearchTree<T extends HasProps> {
   private _root: Node<T> | undefined = undefined
 
   public insert(entity: T) {
@@ -57,14 +58,18 @@ export class BinarySearchTree<T extends HasName> {
     return null
   }
 
-  public dfsInOrder() {
+  public dfsInOrder(room?: string) {
     if (!this._root) return []
 
     const result: T[] = []
 
     const traverse = (node: Node<T>) => {
       if (node.left) traverse(node.left)
-      result.push(node.value)
+      if (room) {
+        if (node.value.room === room) result.push(node.value)
+      } else {
+        result.push(node.value)
+      }
       if (node.right) traverse(node.right)
     }
 

@@ -15,8 +15,8 @@ export class UserResolver {
   }
 
   @Query(() => [User])
-  async users(): Promise<User[]> {
-    const users = this.usersCollection.dfsInOrder()
+  async users(@Arg('room', { nullable: true }) room: string): Promise<User[]> {
+    const users = this.usersCollection.dfsInOrder(room)
     if (!users) return []
     return users
   }
