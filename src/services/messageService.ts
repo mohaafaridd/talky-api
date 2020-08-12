@@ -6,16 +6,16 @@ export class MessageService {
   @Inject('MESSAGE_SERVICE')
   private messagesCollection: Message[] = []
 
-  async getAll(channel: string): Promise<Message[] | null> {
+  async getAll(channel: string): Promise<Message[]> {
     return this.messagesCollection.filter(
       (message) => message.channel === channel
     )
   }
 
   public async sendMessage(
-    sender: string,
     channel: string,
-    content: string
+    content: string,
+    sender: string
   ): Promise<Message> {
     const createdMessage: Message = {
       id: this.messagesCollection.length + 1,

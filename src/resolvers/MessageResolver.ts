@@ -9,44 +9,41 @@ import {
   PubSubEngine,
 } from 'type-graphql'
 import { Message } from '../entities/Message'
+import { MessageService } from '../services/messageService'
 
 @Resolver()
 export class MessageResolver {
-  private messagesCollection: Message[] = []
+  constructor(private readonly messageService: MessageService) {}
 
   @Query(() => [Message])
-  async chat(): Promise<Message[]> {
-    return this.messagesCollection
+  async chat(@Arg('channel') channel: string): Promise<Message[]> {
+    return this.messageService.getAll(channel)
   }
 
   @Mutation(() => Message)
   async sendMessage(
-    @Arg('sender') sender: string,
-    @Arg('message') message: string,
     @Arg('channel') channel: string,
+    @Arg('content') content: string,
+    @Arg('sender') sender: string,
     @PubSub() pubSub: PubSubEngine
   ): Promise<Message> {
-    const createdMessage: Message = {
-      id: this.messagesCollection.length + 1,
-      sender,
+    const message = await this.messageService.sendMessage(
       channel,
-      message,
-      createDate: new Date(),
-    }
+      content,
+      sender
+    )
+    await pubSub.publish(channel, message)
 
-    this.messagesCollection.push(createdMessage)
-    await pubSub.publish(channel, createdMessage)
-
-    return createdMessage
+    return message
   }
 
   // TODO | Args interface
   @Subscription({
-    topics: ({ args }) => args.topic,
+    topics: ({ args }) => args.channel,
   })
-  messageSent(@Root() chat: Message, @Arg('topic') topic: string): Message {
+  messageSent(@Root() chat: Message, @Arg('channel') channel: string): Message {
     // Just to shut up typescript compiler
-    topic.length
+    channel.length
     return chat
   }
 }
