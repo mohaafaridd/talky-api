@@ -2,9 +2,12 @@ import 'reflect-metadata'
 import { ApolloServer, PubSub } from 'apollo-server'
 import { buildSchema } from 'type-graphql'
 import { MessageResolver } from './resolvers/MessageResolver'
+import { UserResolver } from './resolvers/UserResolver'
 
 const main = async () => {
-  const schema = await buildSchema({ resolvers: [MessageResolver] })
+  const schema = await buildSchema({
+    resolvers: [MessageResolver, UserResolver],
+  })
   const pubsub = new PubSub()
   const server = new ApolloServer({ schema, context: () => ({ pubsub }) })
 

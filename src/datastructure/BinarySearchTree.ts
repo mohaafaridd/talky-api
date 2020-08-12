@@ -8,7 +8,7 @@ class Node<T> {
   constructor(public value: T) {}
 }
 
-class BinarySearchTree<T extends HasName> {
+export class BinarySearchTree<T extends HasName> {
   private _root: Node<T> | undefined = undefined
 
   public insert(entity: T) {
@@ -40,13 +40,13 @@ class BinarySearchTree<T extends HasName> {
     }
   }
 
-  public find(value: string): boolean {
-    if (!this._root) return false
+  public find(value: string): T | null {
+    if (!this._root) return null
 
     let current: Node<T> | undefined = this._root
 
     while (current) {
-      if (current.value.name === value) return true
+      if (current.value.name === value) return current.value
       else if (current.value.name > value) {
         current = current.left
       } else {
@@ -54,7 +54,7 @@ class BinarySearchTree<T extends HasName> {
       }
     }
 
-    return false
+    return null
   }
 
   public dfsInOrder() {

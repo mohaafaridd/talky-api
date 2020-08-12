@@ -1,7 +1,7 @@
 import { ObjectType, Field, ID } from 'type-graphql'
 
 @ObjectType()
-export class Message {
+export class User {
   @Field(() => ID)
   id!: number
 
