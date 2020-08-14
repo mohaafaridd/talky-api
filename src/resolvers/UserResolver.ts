@@ -54,4 +54,23 @@ export class UserResolver {
 
     return user
   }
+
+  @Mutation(() => Boolean)
+  async removeUser(
+    @Arg('name') name: string,
+    @Arg('channel') channel: string,
+    @PubSub() pubSub: PubSubEngine
+  ): Promise<boolean> {
+    const indication = await this.userService.deleteOne(name)
+
+    const message = await this.messageService.sendMessage(
+      channel,
+      `${name} has left`,
+      'ADMIN'
+    )
+
+    await pubSub.publish(channel, message)
+
+    return indication
+  }
 }
