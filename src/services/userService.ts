@@ -33,4 +33,9 @@ export class UserService {
 
     return user
   }
+
+  async deleteOne(name: string) {
+    this.usersCollection.delete(name)
+    return true
+  }
 }
