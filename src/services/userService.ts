@@ -17,7 +17,8 @@ export class UserService {
   }
 
   async createOne(name: string, channel: string): Promise<User | null> {
-    const userExists = this.usersCollection.find(name)
+    const userExists =
+      name.toLowerCase() === 'admin' || this.usersCollection.find(name)
 
     if (userExists) throw new Error('Username already exist')
 

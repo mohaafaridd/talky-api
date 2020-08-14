@@ -3,19 +3,21 @@ import {
   Query,
   Arg,
   Mutation,
-  Subscription,
-  Root,
   PubSub,
   PubSubEngine,
 } from 'type-graphql'
 import { Service } from 'typedi'
 import { User } from '../entities/User'
 import { UserService } from '../services/userService'
+import { MessageService } from '../services/messageService'
 
 @Service()
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly messageService: MessageService
+  ) {}
 
   @Query(() => User, { nullable: true })
   async user(@Arg('name') name: string): Promise<User | null> {
@@ -42,17 +44,14 @@ export class UserResolver {
   ): Promise<User | null> {
     const user = await this.userService.createOne(name, channel)
 
-    await pubSub.publish(channel, user)
+    const message = await this.messageService.sendMessage(
+      channel,
+      `${user?.name} has joined`,
+      'ADMIN'
+    )
 
-    return user
-  }
+    await pubSub.publish(channel, message)
 
-  @Subscription({
-    topics: ({ args }) => args.channel,
-  })
-  userJoined(@Root() user: User, @Arg('channel') channel: string): User {
-    // Just to shut up typescript compiler
-    channel.length
     return user
   }
 }
